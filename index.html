@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmo Budget</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── 화이트 + 팬톤 210C (#F99FC9) 컬러 시스템 ── */
+:root{
+  --pk:#F99FC9;       /* 팬톤 210C */
+  --pk-d:#e0609a;     /* 짙은 핑크 — 호버·강조 */
+  --pk-dd:#c03e7a;    /* 더 짙은 핑크 — 텍스트 */
+  --pk-lt:#fde8f2;    /* 연핑크 배경 */
+  --pk-mid:#d4598a;   /* 중간 핑크 — 본문 강조 텍스트 */
+  --bk:#1a1a1a;       /* 헤더 블랙 */
+  --bg:#f7f7f8;       /* 페이지 배경 — 연회색 */
+  --card:#ffffff;     /* 카드 배경 */
+  --card2:#f4f4f6;    /* 서브 카드/입력 배경 */
+  --text:#111111;     /* 기본 텍스트 */
+  --text2:#555555;    /* 보조 텍스트 */
+  --text3:#999999;    /* 힌트 텍스트 */
+  --border:#e4e4e7;   /* 기본 보더 */
+  --border2:#d1d1d6;  /* 강조 보더 */
+  --green:#16a34a;--green-lt:#dcfce7;
+  --red:#dc2626;--red-lt:#fee2e2;
+  --yellow:#d97706;--yellow-lt:#fef3c7;
+  --mono:'DM Mono',monospace;--sans:'Noto Sans KR',sans-serif;
+  --r-lg:12px;--r-md:7px;
+  --shadow:0 1px 8px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);font-size:13px;color:var(--text);background:var(--bg);min-height:100vh}
+
+/* ── HEADER ── */
+.hdr{background:var(--bk);border-bottom:none;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.logo{display:flex;align-items:center;gap:10px}
+.lb{background:var(--pk);color:var(--bk);font-weight:700;font-size:9px;letter-spacing:.12em;padding:3px 9px;border-radius:3px}
+.lt{color:#fff;font-size:13px;font-weight:500;letter-spacing:.02em}
+.nav{display:flex;height:100%}
+.nb{color:rgba(255,255,255,.5);font-size:12px;padding:0 14px;cursor:pointer;border:none;background:none;height:100%;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--sans)}
+.nb:hover{color:rgba(255,255,255,.85)}.nb.on{color:var(--pk);border-bottom-color:var(--pk);font-weight:500}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1280px;margin:0 auto;padding:20px}
+.pg{display:none}.pg.on{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:var(--r-lg);border:1px solid var(--border);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card:hover{border-color:var(--border2)}
+.ct{font-size:12px;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.05em}
+.ct::before{content:'';display:block;width:3px;height:13px;background:var(--pk);border-radius:0;flex-shrink:0}
+
+/* ── STAT CARDS ── */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sc{background:var(--card);border-radius:var(--r-md);border:1px solid var(--border);padding:16px;transition:border-color .15s}
+.sc:hover{border-color:var(--pk)}
+.sc.a{border-top:2px solid var(--pk)}.sc.g{border-top:2px solid var(--green)}
+.sl{font-size:10px;color:var(--text3);margin-bottom:6px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.sv{font-size:24px;font-weight:600;font-family:var(--mono);color:var(--text)}
+.ss{font-size:10px;color:var(--text3);margin-top:4px}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip{padding:4px 14px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text2);transition:all .12s}
+.chip:hover{border-color:var(--pk);color:var(--pk)}
+.chip.on{background:var(--pk);color:#111;border-color:var(--pk);font-weight:600}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+th{background:var(--card2);color:var(--text2);padding:9px 12px;text-align:left;font-weight:600;font-size:10px;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+th:first-child{border-radius:6px 0 0 0}th:last-child{border-radius:0 6px 0 0}
+td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--pk-lt)}
+.r{text-align:right;font-family:var(--mono)}
+
+/* ── BADGES ── */
+.bdg{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap}
+.bnv{background:var(--pk-lt);color:var(--pk-mid)}
+.bac{background:var(--pk);color:#fff}
+.bgn{background:var(--green-lt);color:var(--green)}
+.brd{background:var(--red-lt);color:var(--red)}
+.byw{background:var(--yellow-lt);color:var(--yellow)}
+
+/* ── PROGRESS BARS ── */
+.pb-wrap{margin:6px 0}.pb-lbl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;color:var(--text)}
+.pb{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.pb-f{height:100%;border-radius:2px;transition:width .4s}
+.fg-g{background:var(--green)}.fg-y{background:var(--yellow)}.fg-r{background:var(--red)}
+.fg-pk{background:var(--pk)}
+
+/* ── EVENT CARDS ── */
+.evc{border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:10px;background:var(--card);transition:border-color .15s}
+.evc:hover{border-color:var(--border2)}
+.evh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.evn{font-size:14px;font-weight:600;margin-top:4px;color:var(--text)}
+.evm{font-size:11px;color:var(--text2);margin-top:2px}
+.mgr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.mb{border-radius:var(--r-md);padding:10px;background:var(--card2)}
+.ml{font-size:10px;color:var(--text2);margin-bottom:3px}
+.mv{font-size:13px;font-weight:600;font-family:var(--mono);color:var(--text)}
+
+/* ── ALERTS ── */
+.al{padding:10px 14px;border-radius:var(--r-md);font-size:11px;margin:6px 0;display:flex;gap:7px;align-items:flex-start;border-left:3px solid}
+.alg{background:var(--green-lt);color:var(--green);border-color:var(--green)}
+.alr{background:var(--red-lt);color:var(--red);border-color:var(--red)}
+.aly{background:var(--yellow-lt);color:var(--yellow);border-color:var(--yellow)}
+.aln{background:rgba(249,159,201,.1);color:var(--pk-mid);border-color:var(--pk)}
+
+/* ── FORMS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.fg2{display:flex;flex-direction:column;gap:5px}
+.fg2 label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.05em;text-transform:uppercase}
+.fg2 input,.fg2 select,.fg2 textarea{border:1px solid var(--border);border-radius:var(--r-md);padding:8px 10px;font-size:12px;font-family:var(--sans);color:var(--text);background:var(--card2)}
+.fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus{outline:none;border-color:var(--pk);box-shadow:0 0 0 2px rgba(249,159,201,.15)}
+.fg2 textarea{resize:vertical;min-height:80px;font-family:var(--mono);font-size:11px}
+.fg2 select option{background:var(--card2);color:var(--text)}
+
+/* ── CAT FORM ── */
+.catsec{margin-bottom:12px}
+.cst{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;padding:5px 0 4px;border-bottom:1px solid var(--border);margin-bottom:5px}
+.crow{display:grid;grid-template-columns:160px 1fr 30px;gap:6px;align-items:center;padding:3px 0}
+.clbl{font-size:12px;font-weight:500;color:var(--text2)}
+.cinp{border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;font-family:var(--mono);text-align:right;background:var(--card2);color:var(--text);width:100%}
+.cinp:focus{outline:none;border-color:var(--pk)}
+
+/* ── SCORE ── */
+.score{width:60px;height:60px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;font-size:12px;border:2px solid;flex-shrink:0}
+.sok{background:var(--green-lt);color:var(--green);border-color:var(--green)}
+.swn{background:var(--yellow-lt);color:var(--yellow);border-color:var(--yellow)}
+.sov{background:var(--red-lt);color:var(--red);border-color:var(--red)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:var(--r-md);font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--sans);transition:all .15s}
+.btn-primary{background:var(--pk);color:#fff}.btn-primary:hover{background:var(--pk-d)}
+.btn-dark{background:var(--bk);color:#fff;border:1px solid var(--bk)}.btn-dark:hover{background:#333}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-outline:hover{border-color:var(--pk);color:var(--pk-mid)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{opacity:.88}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{opacity:.88}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+hr.dv{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+/* ── BANNER ── */
+.sync-banner{background:var(--pk-lt);border:1px solid var(--pk-mid);border-radius:var(--r-md);padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* ── TABS ── */
+.tab-bar{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:8px 16px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;font-family:var(--sans);margin-bottom:-1px;transition:all .12s}
+.tab-btn:hover{color:var(--pk-mid)}.tab-btn.on{color:var(--pk-dd);border-bottom-color:var(--pk)}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;overflow-y:auto}
+.modal-bg.on{display:flex;align-items:flex-start;justify-content:center;padding:40px 16px}
+.modal-box{background:var(--card);border-radius:var(--r-lg);border:1px solid var(--border);width:100%;max-width:720px;padding:24px;box-shadow:0 16px 60px rgba(0,0,0,.15)}
+
+/* ── DETAIL PANEL ── */
+.detail-panel{display:none;position:fixed;top:0;right:0;width:540px;height:100vh;background:var(--card);border-left:1px solid var(--border);box-shadow:-8px 0 40px rgba(0,0,0,.12);z-index:150;overflow-y:auto}
+.detail-panel.on{display:block}
+.detail-hdr{background:var(--bk);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1}
+.detail-body{padding:20px}
+.edit-row{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.edit-lbl{font-size:12px;color:var(--text2)}
+.edit-inp{border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px;font-family:var(--mono);text-align:right;width:100%;background:var(--card2);color:var(--text)}
+.edit-inp:focus{outline:none;border-color:var(--pk)}
+
+/* ── VENUE CARD ── */
+.venue-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);transition:all .2s}
+.venue-card:hover{border-color:var(--pk);box-shadow:0 4px 16px rgba(249,159,201,.2);transform:translateY(-1px)}
+.venue-card-header{background:var(--bk);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.venue-type-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600}
+
+/* ── EV LINK ── */
+.ev-link{color:var(--text);font-weight:600;cursor:pointer;border-bottom:1px dashed var(--border2);transition:all .12s}
+.ev-link:hover{color:var(--pk-mid);border-color:var(--pk)}
+
+@media(max-width:768px){
+  .sg{grid-template-columns:1fr 1fr}.g2,.g3{grid-template-columns:1fr}
+  .detail-panel{width:100%}.nb{padding:0 8px;font-size:11px}
+  .crow{grid-template-columns:130px 1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo"><span class="lb">COSMO</span><span class="lt">오프라인 행사 비용 관리</span></div>
+  <nav class="nav">
+    <button class="nb on" onclick="nav('dash')">대시보드</button>
+    <button class="nb" onclick="nav('events')">행사 내역</button>
+    <button class="nb" onclick="nav('venue')">대관료</button>
+    <button class="nb" onclick="nav('est')">견적서 분석</button>
+    <button class="nb" onclick="nav('quote')">견적서 만들기</button>
+  </nav>
+</header>
+
+<!-- ═══ 행사 상세 패널 ═══ -->
+<div id="detail-panel" class="detail-panel">
+  <div class="detail-hdr">
+    <div style="color:var(--text);font-size:14px;font-weight:600" id="dp-title">행사 상세</div>
+    <button onclick="closeDetail()" style="background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;line-height:1">×</button>
+  </div>
+  <div class="detail-body" id="dp-body"></div>
+</div>
+<div id="detail-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:149" onclick="closeDetail()"></div>
+
+<!-- ═══ CSV 모달 ═══ -->
+<div class="modal-bg" id="csv-modal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:600;color:var(--text)">마스터 시트 동기화</div>
+      <button onclick="closeCsvModal()" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--text3);line-height:1">×</button>
+    </div>
+    <div class="al aln" style="margin-bottom:14px">📋 <div style="font-size:11px">구글 시트 → 전체 선택(Ctrl+A) → 복사(Ctrl+C) → 아래 붙여넣기(Ctrl+V)</div></div>
+    <div class="fg2" style="margin-bottom:12px"><label>시트 데이터</label><textarea id="csv-input" rows="10"></textarea></div>
+    <div id="csv-preview" style="display:none;margin-bottom:12px"><div id="csv-pc" style="font-size:11px;background:var(--card2);border-radius:var(--r-md);padding:10px;max-height:140px;overflow-y:auto;font-family:var(--mono);color:var(--text2)"></div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="parseCsvPreview()">미리보기</button>
+      <button class="btn btn-primary" onclick="applyCsv()">✓ 적용</button>
+      <button class="btn btn-outline btn-sm" onclick="closeCsvModal()">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 대관료 추가/수정 모달 ═══ -->
+<div class="modal-bg" id="venue-modal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-size:16px;font-weight:600;color:var(--text)" id="vm-title">대관료 추가</div>
+      <button onclick="closeVenueModal()" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--text3);line-height:1">×</button>
+    </div>
+    <div class="g2" style="margin-bottom:10px">
+      <div class="fg2"><label>장소명</label><input type="text" id="vm-name" placeholder="장소명"></div>
+      <div class="fg2"><label>장소 유형</label>
+        <select id="vm-type">
+          <option>캠퍼스</option><option>야구장</option><option>페스티벌</option><option>팝업/성수</option><option>호텔</option><option>기타</option>
+        </select>
+      </div>
+      <div class="fg2"><label>주소/지역</label><input type="text" id="vm-addr" placeholder="서울 성동구"></div>
+      <div class="fg2"><label>일수</label><input type="number" id="vm-days" value="1" min="1"></div>
+      <div class="fg2"><label>1일 대관료 (원, 없으면 0)</label><input type="number" id="vm-price" value="0" min="0"></div>
+      <div class="fg2"><label>담당자명</label><input type="text" id="vm-contact" placeholder="담당자명"></div>
+      <div class="fg2"><label>담당부서</label><input type="text" id="vm-dept" placeholder="담당부서"></div>
+      <div class="fg2"><label>연락처</label><input type="text" id="vm-tel" placeholder="연락처"></div>
+    </div>
+    <div class="fg2" style="margin-bottom:10px"><label>기존 진행 행사명</label><input type="text" id="vm-event" placeholder="트레일러 - xxx (2024)"></div>
+    <div class="fg2" style="margin-bottom:14px"><label>장소 특이사항</label><textarea id="vm-note" rows="2" placeholder="특이사항"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveVenueModal()">저장</button>
+      <button class="btn btn-outline" onclick="closeVenueModal()">취소</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- 배너 -->
+<div class="sync-banner">
+  <div style="font-size:11px;color:var(--pk-mid);display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+    <span id="banner-txt"><strong>Supabase 연결 중...</strong></span>
+    <span id="conn-status" style="font-size:10px;color:var(--text3)"></span>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <button class="btn btn-dark btn-sm" id="refresh-db-btn" onclick="refreshFromDB()">↺ 새로고침</button>
+    <button class="btn btn-dark btn-sm" onclick="openCsvModal()">📋 시트 동기화</button>
+    <button class="btn btn-outline btn-sm" onclick="resetToInit()" style="font-size:10px">초기화</button>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div class="pg on" id="pg-dash">
+  <div class="sg">
+    <div class="sc a"><div class="sl">전체 행사 수</div><div class="sv" id="d-cnt">—</div><div class="ss">2023–2026 누적</div></div>
+    <div class="sc"><div class="sl">총 매출</div><div class="sv" id="d-rev">—</div><div class="ss">원</div></div>
+    <div class="sc g"><div class="sl">평균 손익률</div><div class="sv" id="d-mg">—</div><div class="ss">전 행사 평균</div></div>
+    <div class="sc"><div class="sl">평균 행사 비용</div><div class="sv" id="d-cost">—</div><div class="ss">원</div></div>
+  </div>
+  <div class="chips" id="yr-chips">
+    <div class="chip on" data-y="all" onclick="dashFilter('all')">전체</div>
+    <div class="chip" data-y="2023" onclick="dashFilter('2023')">2023</div>
+    <div class="chip" data-y="2024" onclick="dashFilter('2024')">2024</div>
+    <div class="chip" data-y="2025" onclick="dashFilter('2025')">2025</div>
+    <div class="chip" data-y="2026" onclick="dashFilter('2026')">2026</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:12px">
+    <div class="card"><div class="ct">유형별 평균 비용</div><div id="type-chart"></div></div>
+    <div class="card"><div class="ct">카테고리별 비용 비중</div><div id="cat-chart"></div></div>
+  </div>
+  <div class="card">
+    <div class="ct">행사 목록 <span style="font-size:10px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">행사명 클릭 → 상세</span></div>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th style="width:50px">연도</th><th style="width:200px">행사명</th><th style="width:72px">유형</th><th style="width:90px">브랜드</th><th class="r" style="width:100px">매출</th><th class="r" style="width:100px">총 비용</th><th class="r" style="width:90px">손익</th><th class="r" style="width:64px">손익률</th></tr></thead>
+      <tbody id="d-tbl"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ EVENTS ══ -->
+<div class="pg" id="pg-events">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div><div style="font-size:20px;font-weight:600;color:var(--text)">행사 내역</div><div style="font-size:12px;color:var(--text2);margin-top:3px">항목별 실비용 · 수정 가능</div></div>
+    <button class="btn btn-primary btn-sm" onclick="openAddPanel()">＋ 행사 추가</button>
+  </div>
+  <div class="chips" id="type-chips">
+    <div class="chip on" data-t="all" onclick="evFilter('all')">전체</div>
+    <div class="chip" data-t="트레일러" onclick="evFilter('트레일러')">트레일러</div>
+    <div class="chip" data-t="슬립오버" onclick="evFilter('슬립오버')">슬립오버</div>
+    <div class="chip" data-t="페스티벌" onclick="evFilter('페스티벌')">페스티벌</div>
+    <div class="chip" data-t="FFF 토크" onclick="evFilter('FFF 토크')">FFF 토크</div>
+  </div>
+  <!-- 행사 추가 패널 -->
+  <div id="add-panel" style="display:none;margin-bottom:14px">
+    <div class="card" style="border:1px solid var(--pk);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:15px;font-weight:600;color:var(--text)">새 행사 추가</div>
+        <button onclick="closeAddPanel()" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--text3);line-height:1">×</button>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn on" id="tab-manual" onclick="switchAddTab('manual')">✏️ 수기 입력</button>
+        <button class="tab-btn" id="tab-excel" onclick="switchAddTab('excel')">📋 엑셀 붙여넣기</button>
+      </div>
+      <div id="ap-manual">
+        <div class="g3" style="margin-bottom:14px">
+          <div class="fg2"><label>행사명</label><input type="text" id="m-name" placeholder="트레일러 X 브랜드명"></div>
+          <div class="fg2"><label>연도</label><select id="m-year"><option>2023</option><option>2024</option><option>2025</option><option selected>2026</option></select></div>
+          <div class="fg2"><label>유형</label><select id="m-type"><option>트레일러</option><option>슬립오버</option><option>페스티벌</option><option>FFF 토크</option><option>기타</option></select></div>
+          <div class="fg2"><label>브랜드</label><input type="text" id="m-brand"></div>
+          <div class="fg2"><label>매출 (원)</label><input type="number" id="m-rev" placeholder="160000000"></div>
+          <div class="fg2"><label>행사 일수</label><input type="number" id="m-days" value="3" min="1"></div>
+        </div>
+        <div id="add-cats"></div>
+        <hr class="dv">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-size:13px;font-weight:600;color:var(--text)">총 비용 합계</span>
+          <span id="add-total" style="font-size:16px;font-weight:700;font-family:var(--mono);color:var(--pk)">0원</span>
+        </div>
+        <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="saveManual()">저장하기</button><button class="btn btn-outline" onclick="closeAddPanel()">취소</button></div>
+      </div>
+      <div id="ap-excel" style="display:none">
+        <div class="al aln" style="margin-bottom:14px">📋 <div style="font-size:11px"><strong>엑셀에서 항목명·금액 열 선택 → 복사(Ctrl+C) → 붙여넣기(Ctrl+V)</strong></div></div>
+        <div class="g3" style="margin-bottom:14px">
+          <div class="fg2"><label>행사명</label><input type="text" id="ex-name" placeholder="트레일러 X 브랜드명"></div>
+          <div class="fg2"><label>연도</label><select id="ex-year"><option>2023</option><option>2024</option><option>2025</option><option selected>2026</option></select></div>
+          <div class="fg2"><label>유형</label><select id="ex-type"><option>트레일러</option><option>슬립오버</option><option>페스티벌</option><option>FFF 토크</option><option>기타</option></select></div>
+          <div class="fg2"><label>브랜드</label><input type="text" id="ex-brand"></div>
+          <div class="fg2"><label>매출 (원)</label><input type="number" id="ex-rev" placeholder="160000000"></div>
+          <div class="fg2"><label>행사 일수</label><input type="number" id="ex-days" value="3" min="1"></div>
+        </div>
+        <div class="fg2" style="margin-bottom:10px"><label>견적 데이터 붙여넣기</label><textarea id="ex-paste" rows="7" placeholder="구분	항목	금액&#10;트레일러	보관료	800,000&#10;제작물	브랜딩	53,807,600"></textarea></div>
+        <div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-outline btn-sm" onclick="previewExcel()">🔍 미리보기</button><button class="btn btn-primary btn-sm" onclick="applyExcel()">✓ 항목 적용</button></div>
+        <div id="ex-preview" style="display:none;margin-bottom:12px"><div id="ex-preview-content"></div></div>
+        <div id="ex-form" style="display:none;padding-top:14px;border-top:1px solid var(--border)">
+          <div id="ex-cats"></div>
+          <hr class="dv">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <span style="font-size:13px;font-weight:600">총 비용 합계</span>
+            <span id="ex-total" style="font-size:16px;font-weight:700;font-family:var(--mono);color:var(--pk)">0원</span>
+          </div>
+          <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="saveExcel()">저장하기</button><button class="btn btn-outline" onclick="closeAddPanel()">취소</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="ev-list"></div>
+</div>
+
+<!-- ══ VENUE ══ -->
+<div class="pg" id="pg-venue">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px">
+    <div>
+      <div style="font-size:20px;font-weight:700;color:var(--text)">대관료 히스토리</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:3px">장소 유형별 대관비 · 진행 행사 · 협상 조건 관리</div>
+    </div>
+    <button class="btn btn-primary" onclick="openVenueModal(null)">＋ 장소 추가</button>
+  </div>
+
+  <!-- 요약 스탯 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px" id="venue-stats"></div>
+
+  <!-- 유형 필터 -->
+  <div class="chips" id="venue-type-chips">
+    <div class="chip on" data-vt="all" onclick="venueFilter('all')">전체</div>
+    <div class="chip" data-vt="캠퍼스" onclick="venueFilter('캠퍼스')">🏫 캠퍼스</div>
+    <div class="chip" data-vt="야구장" onclick="venueFilter('야구장')">⚾ 야구장</div>
+    <div class="chip" data-vt="페스티벌" onclick="venueFilter('페스티벌')">🎪 페스티벌</div>
+    <div class="chip" data-vt="팝업/성수" onclick="venueFilter('팝업/성수')">🏬 팝업/성수</div>
+    <div class="chip" data-vt="호텔" onclick="venueFilter('호텔')">🏨 호텔</div>
+  </div>
+
+  <!-- 장소 카드 그리드 -->
+  <div id="venue-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:20px"></div>
+
+  <!-- 협상 히스토리 -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="ct" style="margin:0">협상 히스토리</div>
+      <span style="font-size:11px;color:var(--text2)">최초 견적 대비 최종 협상 결과</span>
+    </div>
+    <div style="overflow-x:auto"><table>
+      <thead><tr>
+        <th style="width:50px">연도</th>
+        <th style="width:160px">행사명</th>
+        <th style="width:80px">장소 유형</th>
+        <th class="r" style="width:100px">최초 견적</th>
+        <th class="r" style="width:100px">최종 대관료</th>
+        <th class="r" style="width:60px">할인율</th>
+        <th>협상 조건</th>
+      </tr></thead>
+      <tbody id="nego-tbl"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ══ ESTIMATE ══ -->
+<div class="pg" id="pg-est">
+  <div style="font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px">견적서 분석</div>
+  <div style="font-size:12px;color:var(--text2);margin-bottom:16px">항목별 비용을 입력하면 기존 행사 대비 초과 여부를 분석합니다</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <div>
+    <div class="card">
+      <div class="ct">기본 정보</div>
+      <div class="g2">
+        <div class="fg2"><label>행사명</label><input type="text" id="e-name" placeholder="트레일러 X 브랜드"></div>
+        <div class="fg2"><label>유형</label><select id="e-type"><option>트레일러</option><option>슬립오버</option><option>페스티벌</option><option>FFF 토크</option><option>기타</option></select></div>
+        <div class="fg2"><label>예상 매출 (원)</label><input type="number" id="e-rev" placeholder="160000000"></div>
+        <div class="fg2"><label>행사 일수</label><input type="number" id="e-days" value="3"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">항목별 비용</div>
+      <div id="est-cats"></div>
+      <hr class="dv">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-size:13px;font-weight:600;color:var(--text)">총 비용</span>
+        <span id="est-total" style="font-size:16px;font-weight:700;font-family:var(--mono);color:var(--pk)">0원</span>
+      </div>
+      <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="runAnalysis()">📊 분석하기</button><button class="btn btn-outline btn-sm" onclick="clearEst()">초기화</button></div>
+    </div>
+  </div>
+  <div id="analysis-panel">
+    <div class="card" style="text-align:center;padding:60px 20px">
+      <div style="font-size:32px;margin-bottom:12px;color:var(--text3)">📊</div>
+      <div style="font-size:13px;color:var(--text2)">왼쪽에 견적 정보를 입력하고<br><strong>분석하기</strong>를 누르면 결과가 표시됩니다</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ══ QUOTE ══ -->
+<div class="pg" id="pg-quote">
+  <div style="font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px">견적서 만들기</div>
+  <div style="font-size:12px;color:var(--text2);margin-bottom:16px">최근 1년 데이터 기준으로 예상 견적을 자동 생성합니다</div>
+  <div style="display:grid;grid-template-columns:380px 1fr;gap:14px;align-items:start">
+  <div>
+    <div class="card">
+      <div class="ct">견적 조건</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="fg2"><label>행사명</label><input type="text" id="q-name" placeholder="트레일러 X 브랜드명 2026"></div>
+        <div class="fg2"><label>행사 유형</label><select id="q-type" onchange="generateQuote()"><option>트레일러</option><option>슬립오버</option><option>페스티벌</option><option>FFF 토크</option></select></div>
+        <div class="fg2"><label>행사 일수</label><input type="number" id="q-days" value="3" min="1" max="10" oninput="generateQuote()"></div>
+        <div class="fg2">
+          <label>장소 선택 (대관료 자동 적용)</label>
+          <select id="q-venue-sel" onchange="onVenueSelect()">
+            <option value="">-- 장소를 선택하세요 --</option>
+          </select>
+        </div>
+        <div class="fg2"><label>대관료 (원, 직접 입력 가능)</label><input type="number" id="q-venue" value="0" oninput="generateQuote()"></div>
+        <div class="fg2"><label>예상 매출 (원)</label><input type="number" id="q-revenue" placeholder="160000000" oninput="generateQuote()"></div>
+        <div class="fg2"><label>브랜드</label><input type="text" id="q-brand" placeholder="브랜드명"></div>
+      </div>
+      <hr class="dv">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="generateQuote()">🔄 견적 생성</button>
+        <button class="btn btn-green" onclick="downloadQuoteXlsx()">⬇ 엑셀 다운로드</button>
+        <button class="btn btn-dark" onclick="copyQuoteSheet()">📋 구글 시트 복사</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">기준 데이터</div>
+      <div id="q-basis-info" style="font-size:11px;color:var(--text2);line-height:1.7">견적 조건을 입력하면 자동으로 계산됩니다</div>
+    </div>
+  </div>
+  <div id="quote-result">
+    <div class="card" style="text-align:center;padding:60px 20px">
+      <div style="font-size:32px;margin-bottom:12px;color:var(--text3)">📄</div>
+      <div style="font-size:13px;color:var(--text2)">왼쪽에 조건을 입력하면<br>예상 견적이 자동 생성됩니다</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<script>
+/* ════ 카테고리 ════ */
+const CG=[
+  {g:'트레일러 사전 비용',c:[{id:'trailer_storage',l:'보관료'},{id:'trailer_paint',l:'도색/원복'},{id:'trailer_transport',l:'운반/설치/철거비'}]},
+  {g:'대관',c:[{id:'venue',l:'장소 대관료'}]},
+  {g:'제작물',c:[{id:'prod_branding',l:'브랜딩'},{id:'prod_sculpture',l:'조형물/오브제'},{id:'prod_print',l:'인쇄물/지류'},{id:'prod_goodybag',l:'구디백/패키지'},{id:'prod_uniform',l:'의상/스텝복'},{id:'prod_video',l:'영상 제작물'}]},
+  {g:'프로그램',c:[{id:'prog_food',l:'푸드/케이터링'},{id:'prog_ops',l:'프로그램 운영'}]},
+  {g:'운영',c:[{id:'ops_insurance',l:'행사 보험'},{id:'ops_rental',l:'집기 렌탈'},{id:'ops_misc',l:'진행비'}]},
+  {g:'인력',c:[{id:'hr_freelance',l:'프리랜서'},{id:'hr_photo',l:'포토그래퍼'},{id:'hr_video',l:'영상 촬영'},{id:'hr_staff',l:'행사 스텝'}]},
+  {g:'대행/기타',c:[{id:'agency',l:'대행료'},{id:'etc',l:'기타'}]},
+];
+const AC=CG.flatMap(g=>g.c);
+const KEYS=['trailer_storage','trailer_paint','trailer_transport','venue','prod_branding','prod_sculpture','prod_print','prod_goodybag','prod_uniform','prod_video','prog_food','prog_ops','ops_insurance','ops_rental','ops_misc','hr_freelance','hr_photo','hr_video','hr_staff','agency','etc'];
+
+/* ════ 대관료 초기 데이터 ════ */
+let VENUES=[
+  {id:'v1',type:'캠퍼스',name:'숙명여자대학교',addr:'서울 용산구',days:1,price:0,contact:'숙명여대 담당자',dept:'학생처',tel:'-',event:'트레일러 - 숙명여대 (2023)',note:'차량 진입 불가, 별도 운반 필요'},
+  {id:'v2',type:'캠퍼스',name:'상명대학교',addr:'서울 은평구',days:1,price:0,contact:'상명대 담당자',dept:'학생처',tel:'-',event:'트레일러 - 상명대 (2023)',note:'교내 지정 구역 사용'},
+  {id:'v3',type:'캠퍼스',name:'홍익대학교',addr:'서울 마포구',days:1,price:0,contact:'홍익대 담당자',dept:'학생처',tel:'-',event:'트레일러 X 컨디션 (2026)',note:'캠퍼스 내 지정 위치'},
+  {id:'v4',type:'캠퍼스',name:'건국대학교',addr:'서울 광진구',days:1,price:0,contact:'건국대 담당자',dept:'학생처',tel:'-',event:'트레일러 X 컨디션 (2026)',note:'-'},
+  {id:'v5',type:'캠퍼스',name:'경희대학교',addr:'서울 동대문구',days:1,price:0,contact:'경희대 담당자',dept:'학생처',tel:'-',event:'트레일러 X 컨디션 (2026)',note:'-'},
+  {id:'v6',type:'캠퍼스',name:'한양대학교',addr:'서울 성동구',days:1,price:0,contact:'한양대 담당자',dept:'학생처',tel:'-',event:'트레일러 X 컨디션 (2026)',note:'-'},
+  {id:'v7',type:'야구장',name:'잠실야구장',addr:'서울 송파구',days:1,price:20000000,contact:'KBO 담당자',dept:'시설운영팀',tel:'-',event:'트레일러 - 잠실야구장 (2024)',note:'KBO 고정가 (협상 불가)'},
+  {id:'v8',type:'야구장',name:'대전 한화생명볼파크',addr:'대전광역시',days:1,price:10000000,contact:'KBO 담당자',dept:'시설운영팀',tel:'-',event:'트레일러 X KBO 올스타전 대전 (2025)',note:'지방 이동 추가 교통비 발생'},
+  {id:'v9',type:'페스티벌',name:'해브어나이스트립',addr:'서울',days:1,price:0,contact:'행사 주최사',dept:'-',tel:'-',event:'트레일러 - 해브어나이스트립 (2023)',note:'페스티벌 부스 입점 형태'},
+  {id:'v10',type:'페스티벌',name:'뷰민라',addr:'서울',days:2,price:5000000,contact:'행사 주최사',dept:'-',tel:'-',event:'페스티벌 - 뷰민라 (2024)',note:'-'},
+  {id:'v11',type:'페스티벌',name:'그랜드 민트 페스티벌',addr:'서울 올림픽공원',days:1,price:8000000,contact:'GMF 주최사',dept:'-',tel:'-',event:'페스티벌 - GMF (2024)',note:'야외 / 우천 대비 필요'},
+  {id:'v12',type:'팝업/성수',name:'성수동 상업공간 (허쉬)',addr:'서울 성동구',days:3,price:15233333,contact:'장소 담당자',dept:'-',tel:'-',event:'트레일러 - 허쉬 (2023)',note:'전기 용량 확인 필수 / 주차 불가'},
+  {id:'v13',type:'팝업/성수',name:'성수동 팝업공간 (키엘)',addr:'서울 성동구',days:3,price:15000000,contact:'장소 담당자',dept:'-',tel:'-',event:'트레일러 - 키엘 (2024)',note:'냉난방 별도 렌탈 / 주차 불가'},
+  {id:'v14',type:'호텔',name:'서울 특급호텔 (슬립오버)',addr:'서울',days:2,price:27500000,contact:'호텔 담당자',dept:'이벤트팀',tel:'-',event:'뷰티어워즈 슬립오버 (2024)',note:'객실 30개+연회장·조식 포함 패키지'},
+];
+const NEGO=[
+  {year:2023,name:'트레일러 - 숙명여대',type:'캠퍼스',first:0,final:0,disc:0,summary:'대관비 없음 (학생처 협의)',note:'공문 2개월 전 필수'},
+  {year:2023,name:'트레일러 - 상명대',type:'캠퍼스',first:0,final:0,disc:0,summary:'대관비 없음 (학생처 협의)',note:''},
+  {year:2023,name:'트레일러 - 허쉬',type:'팝업/성수',first:50000000,final:45700000,disc:8.6,summary:'미디어 노출 조건, 약 8.6% 할인',note:'성수동 3일'},
+  {year:2024,name:'트레일러 - 키엘',type:'팝업/성수',first:50000000,final:45000000,disc:10.0,summary:'장기 관계 레버리지, 10% 할인',note:'성수동 3일'},
+  {year:2024,name:'트레일러 - 잠실야구장',type:'야구장',first:10000000,final:10000000,disc:0,summary:'KBO 고정가, 협상 불가',note:''},
+  {year:2024,name:'페스티벌 - 뷰민라',type:'페스티벌',first:10000000,final:10000000,disc:0,summary:'협상 없음',note:''},
+  {year:2024,name:'페스티벌 - GMF',type:'페스티벌',first:8000000,final:8000000,disc:0,summary:'협상 없음',note:'야외 행사'},
+  {year:2024,name:'뷰티어워즈 슬립오버',type:'호텔',first:65000000,final:55000000,disc:15.4,summary:'미디어 협업(지면·SNS) 조건, 약 15% 할인',note:'객실+연회장 패키지'},
+  {year:2025,name:'KBO 올스타전 - 대전',type:'야구장',first:10000000,final:10000000,disc:0,summary:'KBO 고정가, 협상 불가',note:'지방 이동비 별도'},
+  {year:2026,name:'트레일러 X 컨디션',type:'캠퍼스',first:20000000,final:18000000,disc:10.0,summary:'10% 할인 협의',note:'잠실+캠퍼스 4곳 묶음'},
+  {year:2026,name:'KBO 올스타전 - 잠실',type:'야구장',first:22000000,final:20000000,disc:9.1,summary:'약 9% 할인 협의 중',note:'예상 비용'},
+];
+let vnid=100;
+
+/* ════ 행사 초기 데이터 ════ */
+function pn(s){return parseInt(String(s||0).replace(/[,\s]/g,''))||0;}
+const INIT=[
+  [1,2023,'트레일러 - 숙명여대','트레일러','멀티 브랜드',60000000,1,2800000,0,0,0,4880000,0,5300000,0,0,0,0,0,0,0,7550000,0,0,0,1535000,0,0],
+  [2,2023,'트레일러 - 해브어나이스트립','트레일러','멀티 브랜드',30000000,1,0,0,3200000,0,6148000,0,0,0,0,0,0,0,0,0,3001000,0,0,0,5270000,0,0],
+  [3,2023,'트레일러 - 상명대','트레일러','멀티 브랜드',35000000,1,0,0,3200000,0,4167000,0,0,0,0,0,0,0,0,0,2448000,0,0,0,2643000,0,0],
+  [4,2023,'트레일러 - 허쉬','트레일러','허쉬',156000000,3,0,0,7400000,45700000,12364000,0,0,0,0,0,0,0,0,0,0,0,0,0,16649000,15000000,0],
+  [5,2023,'그랜트 민트 페스티벌','페스티벌','멀티 브랜드',21000000,2,0,0,0,0,5530400,0,0,0,0,0,0,0,0,0,4500000,0,0,0,1400000,0,0],
+  [6,2024,'트레일러 - 키엘','트레일러','키엘',199690000,3,0,0,0,0,45000000,0,0,15000000,0,0,0,0,2000000,3000000,5000000,0,2000000,3000000,20000000,18891553,0],
+  [7,2024,'트레일러 - 잠실야구장','트레일러','멀티 브랜드',81000000,1,0,0,3000000,10000000,11000000,0,0,6800000,850000,0,0,0,1764000,1810000,4814000,0,850000,2000000,4808000,0,0],
+  [8,2024,'페스티벌 - 뷰민라','페스티벌','멀티 브랜드',64000000,2,0,0,0,10000000,15000000,0,0,5000000,0,0,0,0,1500000,2000000,5000000,0,800000,963000,8000000,0,0],
+  [9,2024,'페스티벌 - 해브어나이스트립','페스티벌','멀티 브랜드',41000000,1,0,0,0,5000000,10000000,0,0,0,0,0,0,0,1000000,1000000,3000000,0,600000,986660,5000000,0,0],
+  [10,2024,'페스티벌 - GMF','페스티벌','멀티 브랜드',50000000,1,0,0,0,8000000,12000000,0,0,5000000,0,0,0,0,1500000,2000000,5000000,0,800000,1000000,8000000,0,1254514],
+  [11,2024,'뷰티어워즈 슬립오버','슬립오버','멀티 브랜드',150000000,2,0,0,0,55000000,20000000,0,5000000,0,0,0,0,0,1000000,2000000,3000000,0,1000000,4000000,5000000,1798950,0],
+  [12,2025,'트레일러 X KBO 올스타전(대전)','트레일러','멀티 브랜드',91300000,1,0,0,3000000,10000000,11000000,0,0,6800000,850000,0,0,0,1764000,1810000,1622720,0,850000,2000000,4808000,0,0],
+  [13,2026,'트레일러 X 컨디션','트레일러','컨디션',211740000,5,800000,4100000,9000000,18000000,53807600,3920000,1624000,5600000,792400,1400000,9100000,0,2217700,4200000,2000000,9000000,2800000,4900000,17500000,0,0],
+  [14,2026,'트레일러 X KBO 올스타전(잠실)','트레일러','멀티 브랜드',120000000,1,0,1800000,1800000,20000000,13000000,0,0,10000000,850000,0,0,0,2000000,1800000,2000000,0,850000,1500000,4808000,0,0],
+];
+function rowToEvent(r){const costs={};KEYS.forEach((k,i)=>costs[k]=pn(r[7+i]));return{id:r[0],year:r[1],name:r[2],type:r[3],brand:r[4],revenue:pn(r[5]),days:pn(r[6]),costs};}
+const INIT_EVENTS=INIT.map(rowToEvent);
+
+/* ════ Supabase ════ */
+const SB_URL='https://dgodxvknkboewvpltwbn.supabase.co';
+const SB_KEY='sb_publishable_03WLpfWoHFDlYflr2TaRoA_N2AMTzgZ';
+const SB_H={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+function setBanner(msg,err=false){
+  const el=document.getElementById('banner-txt');if(el)el.innerHTML=msg;
+  const b=document.querySelector('.sync-banner');
+  if(b)b.style.background=err?'rgba(248,113,113,.08)':'rgba(249,159,201,.08)';
+}
+function setConnStatus(ok,msg){const el=document.getElementById('conn-status');if(el){el.textContent=msg;el.style.color=ok?'var(--green)':'var(--red)';}}
+
+async function dbLoad(){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/events?select=*&order=created_at.asc`,{headers:SB_H});
+    if(!r.ok)throw new Error(await r.text());
+    const rows=await r.json();
+    if(rows.length>0){EVENTS=rows.map(r=>({...r,costs:r.costs||{}}));nid=Math.max(...EVENTS.map(e=>e.id),0)+1;setBanner(`<strong>${EVENTS.length}개 행사 로드됨</strong> — Supabase 연동 🟢`);}
+    else{setBanner('<strong>초기 데이터 업로드 중...</strong>');await dbSeedInit();}
+    setConnStatus(true,'연결됨');renderDash();renderEvents();
+  }catch(e){
+    setBanner(`<strong>연결 오류</strong> — ${e.message}`,true);setConnStatus(false,'오류');
+    EVENTS=[...INIT_EVENTS.map(e=>({...e,costs:{...e.costs}}))];renderDash();renderEvents();
+  }
+}
+async function dbSeedInit(){
+  const rows=INIT_EVENTS.map(({id:_,...r})=>r);
+  const r=await fetch(`${SB_URL}/rest/v1/events`,{method:'POST',headers:{...SB_H,'Prefer':'return=representation'},body:JSON.stringify(rows)});
+  if(!r.ok)throw new Error(await r.text());
+  const ins=await r.json();EVENTS=ins.map(r=>({...r,costs:r.costs||{}}));nid=Math.max(...EVENTS.map(e=>e.id),0)+1;
+  setBanner(`<strong>${EVENTS.length}개 행사</strong> — 초기 데이터 저장 완료 🟢`);
+}
+async function dbInsert(ev){
+  const{id:_,...data}=ev;
+  const r=await fetch(`${SB_URL}/rest/v1/events`,{method:'POST',headers:{...SB_H,'Prefer':'return=representation'},body:JSON.stringify(data)});
+  if(!r.ok)throw new Error(await r.text());return(await r.json())[0];
+}
+async function dbUpdate(ev){
+  const{id,created_at:_,...data}=ev;
+  const r=await fetch(`${SB_URL}/rest/v1/events?id=eq.${id}`,{method:'PATCH',headers:{...SB_H,'Prefer':'return=representation'},body:JSON.stringify(data)});
+  if(!r.ok)throw new Error(await r.text());
+}
+async function dbDelete(id){
+  const r=await fetch(`${SB_URL}/rest/v1/events?id=eq.${id}`,{method:'DELETE',headers:SB_H});
+  if(!r.ok)throw new Error(await r.text());
+}
+async function refreshFromDB(){
+  const btn=document.getElementById('refresh-db-btn');if(btn){btn.disabled=true;btn.textContent='동기화 중...';}
+  await dbLoad();
+  if(btn){btn.disabled=false;btn.textContent='↺ 새로고침';}
+}
+async function resetToInit(){
+  if(!confirm('DB의 모든 행사 데이터를 초기화합니다.\n계속할까요?'))return;
+  setBanner('<strong>초기화 중...</strong>');
+  try{
+    await fetch(`${SB_URL}/rest/v1/events?id=gt.0`,{method:'DELETE',headers:SB_H});
+    await dbSeedInit();renderDash();renderEvents();
+  }catch(e){setBanner(`<strong>초기화 오류</strong> — ${e.message}`,true);}
+}
+let EVENTS=[...INIT_EVENTS.map(e=>({...e,costs:{...e.costs}}))];
+let nid=15;
+
+/* ════ 유틸 ════ */
+function tc(e){return Object.values(e.costs||{}).reduce((a,b)=>a+b,0);}
+function mg(e){return e.revenue>0?(e.revenue-tc(e))/e.revenue:0;}
+function fmtK(n){if(n>=100000000)return(n/100000000).toFixed(1)+'억';if(n>=10000000)return Math.round(n/10000)+'만';return n.toLocaleString();}
+function fmtF(n){return Math.round(n).toLocaleString()+'원';}
+function fmtP(r){return(r*100).toFixed(1)+'%';}
+function tb(t){const m={트레일러:'bnv',슬립오버:'bac',페스티벌:'bgn','FFF 토크':'byw',기타:'byw'};return`<span class="bdg ${m[t]||'bnv'}">${t}</span>`;}
+function mb(m){if(m>=0.4)return`<span class="bdg bgn">${fmtP(m)}</span>`;if(m>=0.25)return`<span class="bdg bac">${fmtP(m)}</span>`;return`<span class="bdg brd">${fmtP(m)}</span>`;}
+
+/* ════ 네비 ════ */
+let curYr='all',curType='all',curVType='all';
+function nav(pg){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+pg).classList.add('on');
+  const lbl={dash:'대시보드',events:'행사 내역',venue:'대관료',est:'견적서 분석',quote:'견적서 만들기'};
+  document.querySelectorAll('.nb').forEach(b=>{if(b.textContent.trim()===lbl[pg])b.classList.add('on');});
+  if(pg==='quote'){generateQuote();populateVenueSelect();}
+  if(pg==='venue'){renderVenue();renderNego();}
+}
+
+/* ════ 대시보드 ════ */
+function dashFilter(yr){curYr=yr;document.querySelectorAll('#yr-chips .chip').forEach(c=>c.classList.toggle('on',c.dataset.y===yr));renderDash();}
+function renderDash(){
+  const evs=curYr==='all'?EVENTS:EVENTS.filter(e=>String(e.year)===curYr);
+  const tR=evs.reduce((a,e)=>a+e.revenue,0),aM=evs.length?evs.reduce((a,e)=>a+mg(e),0)/evs.length:0,aC=evs.length?evs.reduce((a,e)=>a+tc(e),0)/evs.length:0;
+  document.getElementById('d-cnt').textContent=evs.length;
+  document.getElementById('d-rev').textContent=fmtK(tR);
+  document.getElementById('d-mg').textContent=fmtP(aM);
+  document.getElementById('d-cost').textContent=fmtK(aC);
+  const ts=[...new Set(evs.map(e=>e.type))];
+  const td=ts.map(t=>{const a=evs.filter(e=>e.type===t);return{t,avg:a.reduce((s,e)=>s+tc(e),0)/a.length,cnt:a.length};}).sort((a,b)=>b.avg-a.avg);
+  const mxv=Math.max(...td.map(d=>d.avg),1);
+  document.getElementById('type-chart').innerHTML=td.map(d=>{const pp=(d.avg/mxv*100).toFixed(0),cls=d.avg>80000000?'fg-r':d.avg>40000000?'fg-y':'fg-pk';return`<div class="pb-wrap"><div class="pb-lbl"><span style="color:var(--text2)">${d.t}<span style="color:var(--text3);font-size:10px;margin-left:4px">(${d.cnt}회)</span></span><span style="font-family:var(--mono);color:var(--text)">${fmtK(d.avg)}</span></div><div class="pb"><div class="pb-f ${cls}" style="width:${pp}%"></div></div></div>`;}).join('');
+  const ct={};AC.forEach(c=>ct[c.id]=0);evs.forEach(e=>AC.forEach(c=>{ct[c.id]+=(e.costs[c.id]||0);}));
+  const tot=Object.values(ct).reduce((a,b)=>a+b,0)||1;
+  const srt=AC.map(c=>({...c,v:ct[c.id]})).filter(c=>c.v>0).sort((a,b)=>b.v-a.v).slice(0,7);
+  document.getElementById('cat-chart').innerHTML=srt.map(c=>{const pp=c.v/tot*100,cls=pp>25?'fg-r':pp>15?'fg-y':'fg-pk';return`<div class="pb-wrap"><div class="pb-lbl"><span style="color:var(--text2)">${c.l}</span><span style="font-family:var(--mono);color:var(--text)">${pp.toFixed(1)}%</span></div><div class="pb"><div class="pb-f ${cls}" style="width:${pp.toFixed(0)}%"></div></div></div>`;}).join('');
+  document.getElementById('d-tbl').innerHTML=[...evs].sort((a,b)=>b.year-a.year||b.revenue-a.revenue).map(e=>{
+    const t=tc(e),pr=e.revenue-t,m=mg(e);
+    return`<tr><td><span class="bdg bnv">${e.year}</span></td><td><span class="ev-link" onclick="openDetail(${e.id})">${e.name}</span></td><td>${tb(e.type)}</td><td style="color:var(--text2)">${e.brand}</td><td class="r">${fmtF(e.revenue)}</td><td class="r">${fmtF(t)}</td><td class="r" style="color:${pr>=0?'var(--green)':'var(--red)'}">${fmtF(pr)}</td><td class="r">${mb(m)}</td></tr>`;
+  }).join('');
+}
+
+/* ════ 행사 상세 패널 ════ */
+function openDetail(id){
+  const e=EVENTS.find(ev=>ev.id===id);if(!e)return;
+  const t=tc(e),pr=e.revenue-t,m=mg(e);
+  document.getElementById('dp-title').textContent=e.name;
+  document.getElementById('dp-body').innerHTML=`
+    <div style="display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap"><span class="bdg bnv">${e.year}</span>${tb(e.type)}<span style="font-size:11px;color:var(--text2);align-self:center">${e.brand} · ${e.days}일</span></div>
+    <div class="mgr" style="margin-bottom:16px">
+      <div class="mb"><div class="ml">매출</div><div class="mv">${fmtF(e.revenue)}</div></div>
+      <div class="mb"><div class="ml">총 비용</div><div class="mv">${fmtF(t)}</div></div>
+      <div class="mb" style="background:${pr>=0?'var(--green-lt)':'var(--red-lt)'}"><div class="ml">직접 손익</div><div class="mv" style="color:${pr>=0?'var(--green)':'var(--red)'}">${fmtF(pr)}</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;color:var(--text)">항목별 비용</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-outline btn-sm" id="dp-edit-btn" onclick="toggleDetailEdit(${id})">✏️ 수정</button>
+        <button class="btn btn-red btn-sm" onclick="deleteEvent(${id})">삭제</button>
+      </div>
+    </div>
+    <div id="dp-cost-view">
+      ${CG.map(g=>{const items=g.c.filter(c=>(e.costs[c.id]||0)>0);if(!items.length)return'';return`<div style="margin-bottom:10px"><div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">${g.g}</div>${items.map(c=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">${c.l}</span><span style="font-family:var(--mono);color:var(--text)">${fmtF(e.costs[c.id])}</span></div>`).join('')}</div>`;}).join('')}
+    </div>
+    <div id="dp-cost-edit" style="display:none">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">금액 수정 후 저장하세요</div>
+      ${CG.map(g=>`<div style="margin-bottom:12px"><div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">${g.g}</div>${g.c.map(c=>`<div class="edit-row"><div class="edit-lbl">${c.l}</div><input class="edit-inp" type="number" id="dpe__${id}__${c.id}" value="${e.costs[c.id]||0}" min="0"></div>`).join('')}</div>`).join('')}
+      <hr class="dv">
+      <div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" onclick="saveDetailEdit(${id})">💾 저장</button><button class="btn btn-outline btn-sm" onclick="toggleDetailEdit(${id},false)">취소</button></div>
+    </div>
+    <hr class="dv">
+    <button class="btn btn-dark btn-sm" onclick="nav('est');prefillEst(${id})">📊 이 행사로 분석</button>`;
+  document.getElementById('detail-panel').classList.add('on');
+  document.getElementById('detail-overlay').style.display='block';
+}
+function closeDetail(){document.getElementById('detail-panel').classList.remove('on');document.getElementById('detail-overlay').style.display='none';}
+let _detailEdit=false;
+function toggleDetailEdit(id,forceOff){
+  const v=document.getElementById('dp-cost-view'),e=document.getElementById('dp-cost-edit'),b=document.getElementById('dp-edit-btn');
+  if(forceOff===false||_detailEdit){_detailEdit=false;v.style.display='block';e.style.display='none';b.textContent='✏️ 수정';}
+  else{_detailEdit=true;v.style.display='none';e.style.display='block';b.textContent='← 취소';}
+}
+function saveDetailEdit(id){
+  const e=EVENTS.find(ev=>ev.id===id);if(!e)return;
+  AC.forEach(c=>{const el=document.getElementById(`dpe__${id}__${c.id}`);if(el)e.costs[c.id]=parseInt(el.value)||0;});
+  setBanner('<strong>저장 중...</strong>');
+  dbUpdate(e).then(()=>{renderDash();renderEvents();openDetail(id);setBanner(`<strong>"${e.name}"</strong> 수정됨 🟢`);}).catch(err=>setBanner(`<strong>오류</strong> — ${err.message}`,true));
+}
+function deleteEvent(id){
+  const e=EVENTS.find(ev=>ev.id===id);if(!confirm(`"${e?.name}" 삭제하시겠어요?`))return;
+  setBanner('<strong>삭제 중...</strong>');
+  dbDelete(id).then(()=>{EVENTS=EVENTS.filter(ev=>ev.id!==id);closeDetail();renderDash();renderEvents();setBanner(`<strong>${EVENTS.length}개 행사</strong> — 삭제됨 🟢`);}).catch(err=>setBanner(`<strong>오류</strong> — ${err.message}`,true));
+}
+function prefillEst(id){
+  const e=EVENTS.find(ev=>ev.id===id);if(!e)return;
+  document.getElementById('e-name').value=e.name;document.getElementById('e-type').value=e.type;
+  document.getElementById('e-rev').value=e.revenue;document.getElementById('e-days').value=e.days;
+  AC.forEach(c=>{const el=document.getElementById(`est-cats__${c.id}`);if(el)el.value=e.costs[c.id]||0;});
+  document.getElementById('est-total').textContent=fmtF(tc(e));
+}
+
+/* ════ 행사 내역 ════ */
+function evFilter(t){curType=t;document.querySelectorAll('#type-chips .chip').forEach(c=>c.classList.toggle('on',c.dataset.t===t));renderEvents();}
+function renderEvents(){
+  const evs=curType==='all'?EVENTS:EVENTS.filter(e=>e.type===curType);
+  const sorted=[...evs].sort((a,b)=>b.year-a.year||b.revenue-a.revenue);
+  if(!sorted.length){document.getElementById('ev-list').innerHTML='<div style="text-align:center;padding:40px;color:var(--text2)">해당 유형 행사 없음</div>';return;}
+  document.getElementById('ev-list').innerHTML=sorted.map(e=>{
+    const t=tc(e),pr=e.revenue-t,m=mg(e);
+    const crows=CG.map(g=>{const items=g.c.filter(c=>(e.costs[c.id]||0)>0);if(!items.length)return'';return`<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px">${g.g}</div>${items.map(c=>`<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text2)">${c.l}</span><span style="font-family:var(--mono);color:var(--text)">${fmtF(e.costs[c.id])}</span></div>`).join('')}</div>`;}).join('');
+    return`<div class="evc" id="evc-${e.id}">
+      <div class="evh">
+        <div><div style="display:flex;gap:5px;margin-bottom:3px;align-items:center;flex-wrap:wrap"><span class="bdg bnv">${e.year}</span>${tb(e.type)}</div><div class="evn"><span class="ev-link" onclick="openDetail(${e.id})">${e.name}</span></div><div class="evm">${e.brand} · ${e.days}일</div></div>
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div>${mb(m)}<div style="font-size:10px;color:var(--text3);margin-top:2px">손익률</div></div>
+          <div style="display:flex;gap:5px"><button class="btn btn-outline btn-sm" onclick="openEvEdit(${e.id})">✏️ 수정</button><button class="btn btn-red btn-sm" onclick="deleteEvent(${e.id})">삭제</button></div>
+        </div>
+      </div>
+      <div class="mgr"><div class="mb"><div class="ml">매출</div><div class="mv">${fmtF(e.revenue)}</div></div><div class="mb"><div class="ml">총 비용</div><div class="mv">${fmtF(t)}</div></div><div class="mb" style="background:${pr>=0?'var(--green-lt)':'var(--red-lt)'}"><div class="ml">직접 손익</div><div class="mv" style="color:${pr>=0?'var(--green)':'var(--red)'}">${fmtF(pr)}</div></div></div>
+      <div id="ev-view-${e.id}">${crows?`<div style="border-top:1px solid var(--border);padding-top:10px;margin-top:4px">${crows}</div>`:''}</div>
+      <div id="ev-edit-${e.id}" style="display:none;border-top:1px solid var(--border);padding-top:12px;margin-top:8px">
+        <div class="g2" style="margin-bottom:10px"><div class="fg2"><label>매출 (원)</label><input type="number" id="ev-rev-${e.id}" value="${e.revenue}"></div><div class="fg2"><label>행사 일수</label><input type="number" id="ev-days-${e.id}" value="${e.days}"></div></div>
+        ${CG.map(g=>`<div style="margin-bottom:10px"><div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px">${g.g}</div>${g.c.map(c=>`<div class="edit-row"><div class="edit-lbl">${c.l}</div><input class="edit-inp" type="number" id="evedit__${e.id}__${c.id}" value="${e.costs[c.id]||0}" min="0"></div>`).join('')}</div>`).join('')}
+        <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-primary btn-sm" onclick="saveEvEdit(${e.id})">💾 저장</button><button class="btn btn-outline btn-sm" onclick="closeEvEdit(${e.id})">취소</button></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function openEvEdit(id){document.getElementById(`ev-view-${id}`).style.display='none';document.getElementById(`ev-edit-${id}`).style.display='block';}
+function closeEvEdit(id){document.getElementById(`ev-view-${id}`).style.display='block';document.getElementById(`ev-edit-${id}`).style.display='none';}
+function saveEvEdit(id){
+  const e=EVENTS.find(ev=>ev.id===id);if(!e)return;
+  e.revenue=parseInt(document.getElementById(`ev-rev-${id}`).value)||0;
+  e.days=parseInt(document.getElementById(`ev-days-${id}`).value)||1;
+  AC.forEach(c=>{const el=document.getElementById(`evedit__${id}__${c.id}`);if(el)e.costs[c.id]=parseInt(el.value)||0;});
+  setBanner('<strong>저장 중...</strong>');
+  dbUpdate(e).then(()=>{renderEvents();renderDash();setBanner(`<strong>"${e.name}"</strong> 수정됨 🟢`);}).catch(err=>setBanner(`<strong>오류</strong> — ${err.message}`,true));
+}
+
+/* ════ 폼 빌더 ════ */
+function bld(id,cb=''){document.getElementById(id).innerHTML=CG.map(g=>`<div class="catsec"><div class="cst">${g.g}</div>${g.c.map(c=>`<div class="crow"><div class="clbl">${c.l}</div><input class="cinp" type="number" id="${id}__${c.id}" value="0" min="0" oninput="${cb}"><div style="font-size:10px;color:var(--text3)">원</div></div>`).join('')}</div>`).join('');}
+function gcv(pfx){const r={};AC.forEach(c=>{const v=parseInt(document.getElementById(`${pfx}__${c.id}`)?.value||0);r[c.id]=isNaN(v)?0:v;});return r;}
+function sumCats(pfx){return Object.values(gcv(pfx)).reduce((a,b)=>a+b,0);}
+
+/* ════ 행사 추가 ════ */
+function openAddPanel(){
+  document.getElementById('add-panel').style.display='block';
+  bld('add-cats','document.getElementById("add-total").textContent=fmtF(sumCats("add-cats"))');
+  document.getElementById('add-total').textContent='0원';
+  switchAddTab('manual');
+  document.getElementById('add-panel').scrollIntoView({behavior:'smooth'});
+}
+function closeAddPanel(){document.getElementById('add-panel').style.display='none';document.getElementById('ex-preview').style.display='none';document.getElementById('ex-form').style.display='none';document.getElementById('ex-paste').value='';}
+function switchAddTab(tab){
+  const isM=tab==='manual';
+  document.getElementById('ap-manual').style.display=isM?'block':'none';
+  document.getElementById('ap-excel').style.display=isM?'none':'block';
+  document.getElementById('tab-manual').classList.toggle('on',isM);
+  document.getElementById('tab-excel').classList.toggle('on',!isM);
+  if(isM)bld('add-cats','document.getElementById("add-total").textContent=fmtF(sumCats("add-cats"))');
+}
+function saveManual(){
+  const name=document.getElementById('m-name').value.trim();if(!name){alert('행사명 입력');return;}
+  const ev={year:parseInt(document.getElementById('m-year').value),name,type:document.getElementById('m-type').value,brand:document.getElementById('m-brand').value,revenue:parseInt(document.getElementById('m-rev').value)||0,days:parseInt(document.getElementById('m-days').value)||1,costs:gcv('add-cats')};
+  closeAddPanel();setBanner('<strong>저장 중...</strong>');
+  dbInsert(ev).then(saved=>{
+    EVENTS.push({...saved,costs:saved.costs||{}});nid=Math.max(nid,saved.id+1);
+    /* 대관료 자동 업데이트 */
+    autoAddVenueFromEvent(saved);
+    renderEvents();renderDash();setBanner(`<strong>"${saved.name}"</strong> 추가됨 🟢`);
+  }).catch(e=>setBanner(`<strong>오류</strong> — ${e.message}`,true));
+}
+
+/* 행사 저장 시 대관료 자동 반영 */
+function autoAddVenueFromEvent(ev){
+  const venueCost=ev.costs?.venue||0;
+  if(venueCost>0&&ev.name){
+    const exists=VENUES.find(v=>v.event&&v.event.includes(ev.name));
+    if(!exists){
+      VENUES.push({id:'vauto_'+Date.now(),type:'기타',name:ev.name+' 장소',addr:'-',days:ev.days||1,price:Math.round(venueCost/ev.days)||0,contact:'-',dept:'-',tel:'-',event:ev.name+' ('+ev.year+')',note:'행사 추가 시 자동 등록'});
+    }
+  }
+}
+
+/* 엑셀 파싱 */
+const KM=[
+  {keys:['보관','storage'],id:'trailer_storage'},{keys:['도색','원복'],id:'trailer_paint'},
+  {keys:['운반','설치','철거'],id:'trailer_transport'},{keys:['대관','venue','장소'],id:'venue'},
+  {keys:['브랜딩','branding','래핑'],id:'prod_branding'},{keys:['조형물','오브제'],id:'prod_sculpture'},
+  {keys:['인쇄','지류'],id:'prod_print'},{keys:['구디백','굿즈','패키지'],id:'prod_goodybag'},
+  {keys:['의상','스텝복'],id:'prod_uniform'},{keys:['영상제작','제작물영상'],id:'prod_video'},
+  {keys:['푸드','케이터링','음식','음료'],id:'prog_food'},{keys:['프로그램운영','program'],id:'prog_ops'},
+  {keys:['보험'],id:'ops_insurance'},{keys:['렌탈','렌트','기자재'],id:'ops_rental'},
+  {keys:['진행비','교통','식비','운영비'],id:'ops_misc'},{keys:['프리랜서'],id:'hr_freelance'},
+  {keys:['포토','사진','photo'],id:'hr_photo'},{keys:['영상촬영','촬영팀'],id:'hr_video'},
+  {keys:['스텝','슈퍼바이저','프로모터','알바'],id:'hr_staff'},{keys:['대행','agency'],id:'agency'},
+];
+function matchCat(text){const t=text.toLowerCase().replace(/\s/g,'');for(const r of KM){if(r.keys.some(k=>t.includes(k.toLowerCase())))return r.id;}return'etc';}
+function parseExcelPaste(raw){
+  const lines=raw.trim().split('\n').filter(l=>l.trim());
+  const result={};AC.forEach(c=>result[c.id]=0);const parsed=[];
+  for(const line of lines){
+    const cols=line.split('\t').map(c=>c.trim());if(cols.length<2)continue;
+    let ai=-1;for(let i=0;i<cols.length;i++){const cl=cols[i].replace(/[,원₩\s]/g,'');if(/^\d+$/.test(cl)&&parseInt(cl)>0){ai=i;break;}}
+    if(ai<0)continue;
+    const label=cols.slice(0,ai).join(' ');const amount=parseInt(cols[ai].replace(/[,원₩\s]/g,''));
+    if(!amount||isNaN(amount))continue;
+    const catId=matchCat(label);result[catId]=(result[catId]||0)+amount;parsed.push({label:label.trim()||'항목',amount,catId});
+  }
+  return{result,parsed};
+}
+function previewExcel(){
+  const raw=document.getElementById('ex-paste').value.trim();if(!raw){alert('데이터를 붙여넣어 주세요');return;}
+  const{result,parsed}=parseExcelPaste(raw);if(!parsed.length){alert('인식된 금액 항목 없음');return;}
+  const grouped={};parsed.forEach(p=>{if(!grouped[p.catId])grouped[p.catId]=[];grouped[p.catId].push(p);});
+  let html='';
+  for(const catId of Object.keys(grouped)){
+    const cat=AC.find(c=>c.id===catId);const items=grouped[catId];const sub=items.reduce((a,i)=>a+i.amount,0);
+    html+=`<div style="margin-bottom:10px"><div style="font-size:10px;font-weight:600;background:rgba(249,159,201,.12);color:var(--pk-mid);padding:4px 8px;border-radius:4px;margin-bottom:4px">${cat?cat.l:catId} → <span style="font-family:var(--mono)">${fmtF(sub)}</span></div>${items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:11px;padding:2px 8px;color:var(--text2)"><span>└ ${i.label}</span><span style="font-family:var(--mono)">${fmtF(i.amount)}</span></div>`).join('')}</div>`;
+  }
+  html+=`<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding:8px;background:var(--card2);border-radius:var(--r-md);margin-top:8px;color:var(--text)"><span>합계</span><span style="font-family:var(--mono);color:var(--pk)">${fmtF(parsed.reduce((a,i)=>a+i.amount,0))}</span></div>`;
+  document.getElementById('ex-preview-content').innerHTML=html;document.getElementById('ex-preview').style.display='block';
+}
+function applyExcel(){
+  const raw=document.getElementById('ex-paste').value.trim();if(!raw){alert('데이터를 붙여넣어 주세요');return;}
+  const{result,parsed}=parseExcelPaste(raw);if(!parsed.length){alert('인식된 금액 항목 없음');return;}
+  bld('ex-cats','document.getElementById("ex-total").textContent=fmtF(sumCats("ex-cats"))');
+  AC.forEach(c=>{const el=document.getElementById(`ex-cats__${c.id}`);if(el)el.value=result[c.id]||0;});
+  document.getElementById('ex-total').textContent=fmtF(Object.values(result).reduce((a,b)=>a+b,0));
+  document.getElementById('ex-form').style.display='block';document.getElementById('ex-form').scrollIntoView({behavior:'smooth'});
+}
+function saveExcel(){
+  const name=document.getElementById('ex-name').value.trim();if(!name){alert('행사명 입력');return;}
+  const ev={year:parseInt(document.getElementById('ex-year').value),name,type:document.getElementById('ex-type').value,brand:document.getElementById('ex-brand').value,revenue:parseInt(document.getElementById('ex-rev').value)||0,days:parseInt(document.getElementById('ex-days').value)||1,costs:gcv('ex-cats')};
+  closeAddPanel();setBanner('<strong>저장 중...</strong>');
+  dbInsert(ev).then(saved=>{EVENTS.push({...saved,costs:saved.costs||{}});nid=Math.max(nid,saved.id+1);autoAddVenueFromEvent(saved);renderEvents();renderDash();setBanner(`<strong>"${saved.name}"</strong> 추가됨 🟢`);}).catch(e=>setBanner(`<strong>오류</strong> — ${e.message}`,true));
+}
+
+/* ════ 대관료 ════ */
+let curVType='all';
+const VTYPE_COLOR={캠퍼스:{bg:'#e0f2fe',text:'#0369a1',hdr:'#0369a1'},야구장:{bg:'#dcfce7',text:'#15803d',hdr:'#15803d'},페스티벌:{bg:'#fef9c3',text:'#854d0e',hdr:'#854d0e'},'팝업/성수':{bg:'var(--pk-lt)',text:'var(--pk-dd)',hdr:'var(--pk-dd)'},호텔:{bg:'#f3e8ff',text:'#7e22ce',hdr:'#7e22ce'},기타:{bg:'#f4f4f6',text:'#555',hdr:'#555'}};
+function venueFilter(t){
+  curVType=t;
+  document.querySelectorAll('#venue-type-chips .chip').forEach(c=>c.classList.toggle('on',c.dataset.vt===t));
+  renderVenue();
+}
+function renderVenueStats(){
+  const el=document.getElementById('venue-stats');if(!el)return;
+  const withPrice=VENUES.filter(v=>v.price>0);
+  const avgPrice=withPrice.length?Math.round(withPrice.reduce((a,v)=>a+v.price,0)/withPrice.length):0;
+  const maxV=withPrice.length?withPrice.reduce((a,b)=>a.price>b.price?a:b):null;
+  const types=[...new Set(VENUES.map(v=>v.type))].length;
+  el.innerHTML=`
+    <div class="sc a"><div class="sl">등록 장소</div><div class="sv">${VENUES.length}</div><div class="ss">총 ${types}개 유형</div></div>
+    <div class="sc"><div class="sl">평균 1일 대관료</div><div class="sv" style="font-size:18px">${avgPrice?fmtK(avgPrice):'—'}</div><div class="ss">유료 장소 기준</div></div>
+    <div class="sc g"><div class="sl">최고가 장소</div><div class="sv" style="font-size:14px">${maxV?.name||'—'}</div><div class="ss">${maxV?.price?fmtF(maxV.price)+'/일':''}</div></div>
+    <div class="sc" style="border-top:2px solid var(--yellow)"><div class="sl">무료/협의 장소</div><div class="sv">${VENUES.filter(v=>v.price===0).length}</div><div class="ss">캠퍼스 등</div></div>`;
+}
+function renderVenue(){
+  renderVenueStats();
+  const vs=curVType==='all'?VENUES:VENUES.filter(v=>v.type===curVType);
+  const el=document.getElementById('venue-list');
+  if(!vs.length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--text2);grid-column:1/-1">해당 유형 장소 없음</div>';return;}
+  el.innerHTML=vs.map(v=>{
+    const vc=VTYPE_COLOR[v.type]||VTYPE_COLOR['기타'];
+    return`<div class="venue-card">
+      <div class="venue-card-header">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;background:${vc.bg};color:${vc.text}">${v.type}</span>
+          <span style="color:#fff;font-size:14px;font-weight:600">${v.name}</span>
+        </div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff;border:none;font-size:10px;padding:4px 10px" onclick="openVenueModal('${v.id}')">수정</button>
+          <button class="btn btn-sm" style="background:rgba(248,113,113,.25);color:#fca5a5;border:none;font-size:10px;padding:4px 10px" onclick="deleteVenue('${v.id}')">삭제</button>
+        </div>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">1일 대관료</div>
+            <div style="font-size:22px;font-weight:700;font-family:var(--mono);color:${v.price>0?'var(--pk-dd)':'var(--text3)'}">${v.price>0?fmtF(v.price):'무료 · 협의'}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">위치</div>
+            <div style="font-size:12px;color:var(--text2)">${v.addr}</div>
+          </div>
+        </div>
+        <div style="background:var(--pk-lt);border-radius:var(--r-md);padding:10px 12px;margin-bottom:10px">
+          <div style="font-size:10px;color:var(--pk-dd);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em">진행 행사</div>
+          <div style="font-size:12px;color:var(--text);font-weight:500;line-height:1.5">${v.event||'—'}</div>
+        </div>
+        ${v.note&&v.note!=='-'?`<div style="background:var(--card2);border-radius:var(--r-md);padding:8px 12px;margin-bottom:10px;border-left:3px solid var(--pk)">
+          <div style="font-size:10px;color:var(--text3);margin-bottom:3px">특이사항 · 조건</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5">${v.note}</div>
+        </div>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text3);padding-top:8px;border-top:1px solid var(--border)">
+          <span>담당: <span style="color:var(--text2);font-weight:500">${v.contact}</span>${v.dept&&v.dept!=='-'?' · <span style="color:var(--text2)">'+v.dept+'</span>':''}</span>
+          ${v.tel&&v.tel!=='-'?`<span style="color:var(--text2)">${v.tel}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function renderNego(){
+  document.getElementById('nego-tbl').innerHTML=NEGO.map(n=>{
+    const vc=VTYPE_COLOR[n.type]||VTYPE_COLOR['기타'];
+    return`<tr>
+      <td><span class="bdg bnv">${n.year}</span></td>
+      <td style="font-weight:500;color:var(--text)">${n.name}</td>
+      <td><span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:${vc.bg};color:${vc.text}">${n.type}</span></td>
+      <td class="r" style="color:var(--text2)">${n.first?fmtF(n.first):'—'}</td>
+      <td class="r" style="font-weight:600;color:${n.final>0?'var(--pk-dd)':'var(--text3)'}">${n.final?fmtF(n.final):'무료'}</td>
+      <td class="r">${n.disc>0?`<span class="bdg bgn">-${n.disc}%</span>`:`<span style="font-size:10px;color:var(--text3)">고정가</span>`}</td>
+      <td style="white-space:normal;font-size:11px;color:var(--text2)">${n.summary}${n.note?` <span style="color:var(--text3)">(${n.note})</span>`:''}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* 대관료 모달 */
+let _editVId=null;
+function openVenueModal(id){
+  _editVId=id;
+  const vm=VENUES.find(v=>v.id===id);
+  document.getElementById('vm-title').textContent=id?'장소 수정':'장소 추가';
+  document.getElementById('vm-name').value=vm?.name||'';
+  document.getElementById('vm-type').value=vm?.type||'캠퍼스';
+  document.getElementById('vm-addr').value=vm?.addr||'';
+  document.getElementById('vm-days').value=vm?.days||1;
+  document.getElementById('vm-price').value=vm?.price||0;
+  document.getElementById('vm-contact').value=vm?.contact||'';
+  document.getElementById('vm-dept').value=vm?.dept||'';
+  document.getElementById('vm-tel').value=vm?.tel||'';
+  document.getElementById('vm-event').value=vm?.event||'';
+  document.getElementById('vm-note').value=vm?.note||'';
+  document.getElementById('venue-modal').classList.add('on');
+}
+function closeVenueModal(){document.getElementById('venue-modal').classList.remove('on');}
+function saveVenueModal(){
+  const data={
+    id:_editVId||('v'+Date.now()),
+    type:document.getElementById('vm-type').value,
+    name:document.getElementById('vm-name').value.trim(),
+    addr:document.getElementById('vm-addr').value,
+    days:parseInt(document.getElementById('vm-days').value)||1,
+    price:parseInt(document.getElementById('vm-price').value)||0,
+    contact:document.getElementById('vm-contact').value,
+    dept:document.getElementById('vm-dept').value,
+    tel:document.getElementById('vm-tel').value,
+    event:document.getElementById('vm-event').value,
+    note:document.getElementById('vm-note').value,
+  };
+  if(!data.name){alert('장소명을 입력해주세요');return;}
+  if(_editVId){const idx=VENUES.findIndex(v=>v.id===_editVId);if(idx>=0)VENUES[idx]=data;}
+  else VENUES.push(data);
+  closeVenueModal();renderVenue();populateVenueSelect();
+}
+function deleteVenue(id){
+  if(!confirm('이 장소를 삭제하시겠어요?'))return;
+  VENUES=VENUES.filter(v=>v.id!==id);renderVenue();populateVenueSelect();
+}
+
+/* ════ 견적서 분석 ════ */
+function clearEst(){
+  ['e-name','e-rev'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('e-days').value='3';
+  AC.forEach(c=>{const el=document.getElementById(`est-cats__${c.id}`);if(el)el.value=0;});
+  document.getElementById('est-total').textContent='0원';
+  document.getElementById('analysis-panel').innerHTML='<div class="card" style="text-align:center;padding:60px 20px"><div style="font-size:32px;margin-bottom:12px;color:var(--text3)">📊</div><div style="font-size:13px;color:var(--text2)">왼쪽에 견적 정보를 입력하고<br><strong>분석하기</strong>를 누르면 결과가 표시됩니다</div></div>';
+}
+function runAnalysis(){
+  const name=document.getElementById('e-name').value||'신규 견적',type=document.getElementById('e-type').value,revenue=parseInt(document.getElementById('e-rev').value)||0,days=parseInt(document.getElementById('e-days').value)||1,costs=gcv('est-cats');
+  const tc2=Object.values(costs).reduce((a,b)=>a+b,0);if(tc2===0){alert('비용 항목을 1개 이상 입력해주세요');return;}
+  const same=EVENTS.filter(e=>e.type===type),avgC=same.length?same.reduce((a,e)=>a+tc(e),0)/same.length:0;
+  const newM=revenue>0?(revenue-tc2)/revenue:0,over=avgC>0?(tc2-avgC)/avgC*100:0;
+  const sc=over>20?'sov':over>5?'swn':'sok',sl=over>20?'초과':over>5?'주의':'양호',sign=over>=0?'+':'';
+  const cc=CG.map(g=>({g:g.g,items:g.c.map(c=>{const nv=costs[c.id]||0,av=same.length?same.reduce((a,e)=>a+(e.costs[c.id]||0),0)/same.length:0,diff=av>0?(nv-av)/av*100:null;return{...c,nv,av,diff};}).filter(c=>c.nv>0||c.av>0)})).filter(g=>g.items.length>0);
+  const ah=over>20?`<div class="al alr">⚠ 평균 대비 ${over.toFixed(1)}% 초과. 항목별 재검토 권장.</div>`:over>5?`<div class="al aly">⚡ 평균 대비 소폭 초과 (${over.toFixed(1)}%).</div>`:`<div class="al alg">✓ 적정 비용 (${sign}${over.toFixed(1)}%).</div>`;
+  document.getElementById('analysis-panel').innerHTML=`<div class="card"><div class="ct">분석 결과</div><div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div class="score ${sc}"><span>${sl}</span></div><div><div style="font-size:14px;font-weight:600;color:var(--text)">${name}</div><div style="font-size:11px;color:var(--text2)">${type} · ${days}일 · ${same.length}건 비교</div><div style="font-size:12px;margin-top:3px;color:${over>20?'var(--red)':over>5?'var(--yellow)':'var(--green)'};font-weight:600">평균 대비 ${sign}${over.toFixed(1)}%</div></div></div><div class="mgr" style="margin-bottom:14px"><div class="mb"><div class="ml">견적 총 비용</div><div class="mv" style="font-size:12px">${fmtF(tc2)}</div></div><div class="mb" style="background:${newM>=0.3?'var(--green-lt)':'var(--red-lt)'}"><div class="ml">예상 손익률</div><div class="mv" style="font-size:12px;color:${newM>=0.3?'var(--green)':'var(--red)'}">${fmtP(newM)}</div></div><div class="mb"><div class="ml">유형 평균 비용</div><div class="mv" style="font-size:12px">${avgC?fmtF(avgC):'—'}</div></div></div>${ah}<div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;margin:14px 0 8px">항목별 비교</div>${cc.map(g=>`<div style="margin-bottom:12px"><div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">${g.g}</div>${g.items.map(c=>{const io=c.diff!==null&&c.diff>15,iw=c.diff!==null&&c.diff>0&&c.diff<=15,cls=io?'brd':iw?'byw':'bgn';const bp=Math.min(Math.abs(c.diff||0),100);return`<div style="padding:5px 0;border-bottom:1px solid var(--border)"><div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:3px"><span style="color:var(--text)">${c.l}</span><span style="display:flex;gap:8px;align-items:center"><span style="color:var(--text3);font-family:var(--mono)">${c.av?fmtF(c.av):'없음'}</span><span style="font-family:var(--mono);font-weight:600;color:var(--text)">${fmtF(c.nv)}</span>${c.diff!==null?`<span class="bdg ${cls}">${c.diff>=0?'+':''}${c.diff.toFixed(0)}%</span>`:'<span class="bdg bnv">신규</span>'}</span></div>${c.diff!==null&&Math.abs(c.diff)>2?`<div class="pb"><div class="pb-f ${io?'fg-r':iw?'fg-y':'fg-pk'}" style="width:${bp}%"></div></div>`:''}</div>`;}).join('')}</div>`).join('')}<div style="margin-top:14px"><button class="btn btn-primary btn-sm" onclick="EVENTS.push({id:nid++,year:2026,name:${JSON.stringify(name)},type:${JSON.stringify(type)},revenue:${revenue},days:${days},costs:${JSON.stringify(costs)}});nav('events');renderEvents();renderDash();">행사 내역에 저장</button></div></div>`;
+}
+
+/* ════ 견적서 만들기 ════ */
+function populateVenueSelect(){
+  const sel=document.getElementById('q-venue-sel');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">-- 장소를 선택하세요 --</option>';
+  VENUES.filter(v=>v.price>0).forEach(v=>{
+    const opt=document.createElement('option');
+    opt.value=v.id;opt.textContent=`${v.name} (${v.type}) — ${fmtF(v.price)}/일`;
+    sel.appendChild(opt);
+  });
+  sel.value=cur;
+}
+function onVenueSelect(){
+  const sid=document.getElementById('q-venue-sel').value;
+  const v=VENUES.find(v=>v.id===sid);
+  if(v){
+    const days=parseInt(document.getElementById('q-days').value)||1;
+    document.getElementById('q-venue').value=v.price*days;
+  }else{
+    document.getElementById('q-venue').value=0;
+  }
+  generateQuote();
+}
+
+let lastQuote=null;
+function getRecentEvents(type){
+  const now=new Date().getFullYear();
+  const recent=EVENTS.filter(e=>e.type===type&&e.year>=(now-1));
+  return recent.length>=2?recent:EVENTS.filter(e=>e.type===type);
+}
+function generateQuote(){
+  const type=document.getElementById('q-type').value;
+  const days=parseInt(document.getElementById('q-days').value)||3;
+  const venueInput=parseInt(document.getElementById('q-venue').value)||0;
+  const revenue=parseInt(document.getElementById('q-revenue').value)||0;
+  const name=document.getElementById('q-name').value||`${type} 예상 견적`;
+  const brand=document.getElementById('q-brand').value||'—';
+
+  /* venue select 일수 연동 */
+  const sid=document.getElementById('q-venue-sel')?.value;
+  if(sid){const v=VENUES.find(v=>v.id===sid);if(v)document.getElementById('q-venue').value=v.price*days;}
+
+  const basis=getRecentEvents(type);
+  if(!basis.length){document.getElementById('quote-result').innerHTML='<div class="card" style="text-align:center;padding:40px;color:var(--text2)">해당 유형 기준 데이터 없음</div>';return;}
+  const avgCosts={};
+  AC.forEach(c=>{
+    const vals=basis.filter(e=>(e.costs[c.id]||0)>0);
+    if(vals.length){const apd=vals.reduce((a,e)=>a+(e.costs[c.id]/e.days),0)/vals.length;avgCosts[c.id]=Math.round(apd*days);}
+    else avgCosts[c.id]=0;
+  });
+  if(venueInput>0)avgCosts['venue']=venueInput;
+  const totalCost=Object.values(avgCosts).reduce((a,b)=>a+b,0);
+  const margin=revenue>0?(revenue-totalCost)/revenue:0;
+  lastQuote={name,brand,type,days,revenue,costs:avgCosts,basis:basis.length};
+
+  /* 선택된 장소명 */
+  const selV=VENUES.find(v=>v.id===sid);
+  const venueLabel=selV?` — ${selV.name}`:venueInput>0?' — 직접 입력':'';
+
+  document.getElementById('q-basis-info').innerHTML=`<div style="display:flex;flex-direction:column;gap:4px">
+    <div>• 기준 행사 <strong style="color:var(--pk)">${basis.length}건</strong> (${Math.min(...basis.map(e=>e.year))}–${Math.max(...basis.map(e=>e.year))})</div>
+    <div>• 항목별 <strong>일 평균 × ${days}일</strong></div>
+    ${venueInput>0?`<div>• 대관료${venueLabel}: <strong style="color:var(--pk)">${fmtF(venueInput)}</strong></div>`:`<div style="color:var(--text3)">• 대관료 미입력 (기준 행사 평균 적용)</div>`}
+    <div style="margin-top:4px;color:var(--text3);font-size:10px">※ 실제 견적은 현장 상황에 따라 달라질 수 있습니다</div>
+  </div>`;
+
+  const catRows=CG.map(g=>{
+    const items=g.c.filter(c=>avgCosts[c.id]>0);if(!items.length)return'';
+    return`<div style="margin-bottom:12px"><div style="font-size:9px;font-weight:600;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">${g.g}</div>${items.map(c=>{const dayAmt=Math.round(avgCosts[c.id]/days);return`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text)">${c.l}</span><div style="text-align:right"><div style="font-family:var(--mono);font-weight:600;color:var(--text)">${fmtF(avgCosts[c.id])}</div><div style="font-size:10px;color:var(--text3)">일 평균 ${fmtF(dayAmt)}</div></div></div>`;}).join('')}</div>`;
+  }).join('');
+  const mc=margin>=0.35?'var(--green)':margin>=0.2?'var(--yellow)':'var(--red)';
+  document.getElementById('quote-result').innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;flex-wrap:wrap;gap:8px"><div><div style="font-size:16px;font-weight:700;color:var(--text)">${name}</div><div style="font-size:12px;color:var(--text2);margin-top:3px">${brand} · ${type} · ${days}일${venueLabel}</div></div>${mb(margin)}</div><div class="mgr" style="margin-bottom:16px"><div class="mb"><div class="ml">예상 총 비용</div><div class="mv">${fmtF(totalCost)}</div></div><div class="mb"><div class="ml">예상 매출</div><div class="mv">${revenue?fmtF(revenue):'—'}</div></div><div class="mb" style="background:${margin>=0.3?'var(--green-lt)':margin>0?'var(--yellow-lt)':'var(--red-lt)'}"><div class="ml">예상 손익률</div><div class="mv" style="color:${mc}">${revenue?fmtP(margin):'—'}</div></div></div><div style="font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px">항목별 예상 비용</div>${catRows}<hr class="dv"><div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0"><span style="font-size:14px;font-weight:700;color:var(--text)">총 예상 비용</span><span style="font-size:20px;font-weight:700;font-family:var(--mono);color:var(--pk)">${fmtF(totalCost)}</span></div></div>`;
+}
+
+function downloadQuoteXlsx(){
+  if(!lastQuote){alert('먼저 견적을 생성해주세요');return;}
+  const q=lastQuote;
+  const rows=[['코스모폴리탄 오프라인 행사 예상 견적서'],[],['행사명',q.name],['브랜드',q.brand],['유형',q.type],['행사 일수',q.days+'일'],['예상 매출',q.revenue?q.revenue:'—'],[],['카테고리','항목','예상 금액(원)','일 평균','비고']];
+  CG.forEach(g=>{g.c.forEach(c=>{if((q.costs[c.id]||0)>0)rows.push([g.g,c.l,q.costs[c.id],Math.round(q.costs[c.id]/q.days),'']);});});
+  const tot=Object.values(q.costs).reduce((a,b)=>a+b,0);
+  rows.push([],['' ,'합계',tot,'',''],[]);
+  if(q.revenue){rows.push(['','예상 손익',q.revenue-tot,'','']);rows.push(['','예상 손익률',((q.revenue-tot)/q.revenue*100).toFixed(1)+'%','','']);}
+  rows.push([],[`※ 최근 동일 유형 ${q.basis}건 평균 기준`]);
+  const bom='\uFEFF',tsv=rows.map(r=>r.join('\t')).join('\n');
+  const blob=new Blob([bom+tsv],{type:'text/tab-separated-values;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${q.name}_예상견적서.xls`;a.click();URL.revokeObjectURL(a.href);
+}
+function copyQuoteSheet(){
+  if(!lastQuote){alert('먼저 견적을 생성해주세요');return;}
+  const q=lastQuote;
+  const rows=[['코스모폴리탄 오프라인 행사 예상 견적서'],[],['행사명',q.name],['브랜드',q.brand],['유형',q.type],['행사 일수',q.days+'일'],['예상 매출',q.revenue||'—'],[],['카테고리','항목','예상 금액(원)','일 평균']];
+  CG.forEach(g=>{g.c.forEach(c=>{if((q.costs[c.id]||0)>0)rows.push([g.g,c.l,q.costs[c.id],Math.round(q.costs[c.id]/q.days)]);});});
+  const tot=Object.values(q.costs).reduce((a,b)=>a+b,0);
+  rows.push([],['' ,'합계',tot,'']);
+  if(q.revenue){rows.push(['','예상 손익',q.revenue-tot,'']);rows.push(['','예상 손익률',((q.revenue-tot)/q.revenue*100).toFixed(1)+'%','']);}
+  const tsv=rows.map(r=>r.join('\t')).join('\n');
+  navigator.clipboard.writeText(tsv).then(()=>alert('클립보드에 복사됐습니다!\n구글 시트 A1셀에 Ctrl+V로 붙여넣으세요.')).catch(()=>{const ta=document.createElement('textarea');ta.value=tsv;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);alert('복사됐습니다!');});
+}
+
+/* ════ CSV 동기화 ════ */
+function openCsvModal(){document.getElementById('csv-modal').classList.add('on');}
+function closeCsvModal(){document.getElementById('csv-modal').classList.remove('on');document.getElementById('csv-preview').style.display='none';}
+function parseTsv(raw){
+  const lines=raw.trim().split('\n').map(l=>l.split('\t'));let ds=0;
+  for(let i=0;i<lines.length;i++){const r=lines[i];if(r[0]==='ID'||r[0]==='id'){ds=i+1;break;}else if(!isNaN(parseInt(r[0]))&&r[2]&&r[3]){ds=i;break;}}
+  const results=[];
+  for(let i=ds;i<lines.length;i++){const r=lines[i];if(!r[0]||isNaN(parseInt(r[0])))continue;const costs={};KEYS.forEach((k,ki)=>costs[k]=pn(r[7+ki]));results.push({id:parseInt(r[0]),year:parseInt(r[1]),name:r[2]||'',type:r[3]||'트레일러',brand:r[4]||'',revenue:pn(r[5]),days:pn(r[6])||1,costs});}
+  return results;
+}
+function parseCsvPreview(){
+  const raw=document.getElementById('csv-input').value.trim();if(!raw){alert('데이터를 붙여넣어 주세요');return;}
+  try{const rows=parseTsv(raw);if(!rows.length){alert('파싱된 데이터가 없습니다');return;}
+  document.getElementById('csv-preview').style.display='block';document.getElementById('csv-pc').textContent=rows.map(r=>`[${r.year}] ${r.name} | ${fmtF(r.revenue)}`).join('\n');}catch(e){alert('오류: '+e.message);}
+}
+function applyCsv(){
+  const raw=document.getElementById('csv-input').value.trim();if(!raw){alert('데이터를 붙여넣어 주세요');return;}
+  try{
+    const rows=parseTsv(raw);if(!rows.length){alert('파싱된 데이터가 없습니다');return;}
+    closeCsvModal();setBanner('<strong>DB에 업로드 중...</strong>');
+    fetch(`${SB_URL}/rest/v1/events?id=gt.0`,{method:'DELETE',headers:SB_H})
+      .then(()=>{const ti=rows.map(({id:_,...r})=>r);return fetch(`${SB_URL}/rest/v1/events`,{method:'POST',headers:{...SB_H,'Prefer':'return=representation'},body:JSON.stringify(ti)});})
+      .then(r=>r.json())
+      .then(ins=>{EVENTS=ins.map(r=>({...r,costs:r.costs||{}}));nid=Math.max(...EVENTS.map(e=>e.id),0)+1;renderDash();renderEvents();setBanner(`<strong>${EVENTS.length}개 행사 동기화 완료</strong> 🟢`);})
+      .catch(e=>setBanner(`<strong>업로드 실패</strong> — ${e.message}`,true));
+  }catch(e){alert('오류: '+e.message);}
+}
+
+/* ════ init ════ */
+bld('est-cats','document.getElementById("est-total").textContent=fmtF(sumCats("est-cats"))');
+renderDash();
+renderEvents();
+populateVenueSelect();
+dbLoad();
+</script>
+</body>
+</html>
